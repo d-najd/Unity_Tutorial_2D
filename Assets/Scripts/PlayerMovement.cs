@@ -1,14 +1,17 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D _rb;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
+    private BoxCollider2D _coll;
     private float _xAxis;
-    [FormerlySerializedAs("jumpVelocity")] [SerializeField] private float jumpForce = 12f;
-    [FormerlySerializedAs("moveVelocity")] [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float jumpForce = 12f;
+    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private LayerMask jumpableGround;
     
     private static readonly int AnimStateTag = Animator.StringToHash("state");
     private enum AnimationState
@@ -24,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
+        _coll = GetComponent<BoxCollider2D>();
     }
 
     private void Update()
@@ -38,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb.velocity = new Vector2(_xAxis * moveSpeed, _rb.velocity.y);
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
         }
@@ -68,5 +72,11 @@ public class PlayerMovement : MonoBehaviour
         }
         
         _animator.SetInteger(AnimStateTag, (int) animState);
+    }
+
+    private bool IsGrounded()
+    {
+        return Physics2D.BoxCast(_coll.bounds.center, _coll.bounds.size, 0f, Vector2.down, .1f, jumpableGround);
+        // return Physics2D.Raycast(_coll.bounds.center, Vector2.down, (_coll.bounds.size.y / 2f) + 0.1f, jumpableGround);
     }
 }
