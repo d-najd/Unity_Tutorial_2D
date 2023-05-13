@@ -27,6 +27,7 @@ public class PlayerLife : MonoBehaviour
 
     private void RestartLevel()
     {
+        Debug.Log("Restarting Level");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
