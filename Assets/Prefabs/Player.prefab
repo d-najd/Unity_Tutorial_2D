@@ -16,10 +16,12 @@ GameObject:
   - component: {fileID: 5738432801226364775}
   - component: {fileID: 5738432801226364774}
   - component: {fileID: 5738432801226364773}
+  - component: {fileID: 6366136988679861130}
   - component: {fileID: 6408083774984261063}
   - component: {fileID: 331158808849296965}
   - component: {fileID: 1999417892060096306}
   - component: {fileID: 140956010751500529}
+  - component: {fileID: 9110188570591745188}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -208,6 +210,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathSFX: {fileID: 140956010751500529}
+--- !u!232 &6366136988679861130
+DistanceJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738432801226364798}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 1
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0, y: 0}
+  m_AutoConfigureDistance: 0
+  m_Distance: 2
+  m_MaxDistanceOnly: 1
 --- !u!82 &6408083774984261063
 AudioSource:
   m_ObjectHideFlags: 0
@@ -592,3 +613,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &9110188570591745188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738432801226364798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c75a5fd368eed7178e09e0dfeff9548, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerIndex: 0
