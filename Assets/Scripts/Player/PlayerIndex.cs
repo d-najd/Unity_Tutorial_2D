@@ -5,4 +5,9 @@ using UnityEngine;
 public class PlayerIndex : MonoBehaviour
 {
     [SerializeField] private int playerIndex = 0;
+
+    public int GetPlayerIndex()
+    {
+        return playerIndex;
+    }
 }

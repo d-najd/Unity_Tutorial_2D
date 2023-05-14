@@ -1,6 +1,5 @@
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -8,10 +7,11 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
     private BoxCollider2D _coll;
-    private float _xAxis;
+    private IPlayerMovement _playerMovement;
+    private PlayerIndex _playerIndex;
     [SerializeField] private float jumpForce = 12f;
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private LayerMask jumpableGround;
+    [SerializeField] private LayerMask[] jumpableLayers;
 
     [SerializeField] private AudioSource runningSFX;
     [SerializeField] private AudioSource jumpingSFX;
@@ -27,41 +27,44 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        _coll = GetComponent<BoxCollider2D>();
         _rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
-        _coll = GetComponent<BoxCollider2D>();
+        _playerIndex = GetComponent<PlayerIndex>();
+
+        _playerMovement = InitializePlayerMovement();
     }
+
 
     private void Update()
     {
-        _xAxis = Input.GetAxisRaw("Horizontal");
-
         HandleMovement();
-        HandleAnimations();
+        AnimatePlayer();
     }
 
     private void HandleMovement()
     {
-        _rb.velocity = new Vector2(_xAxis * moveSpeed, _rb.velocity.y);
-
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+        _rb.velocity = new Vector2(_playerMovement.GetXAxis() * moveSpeed, _rb.velocity.y);
+        
+        if (_playerMovement.GetJump() && IsGrounded())
         {
             _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
             jumpingSFX.Play();
         }
     }
 
-    private void HandleAnimations()
+
+    private void AnimatePlayer()
     {
         var animState = AnimationState.Idle;
-        if (_xAxis > 0f)
+        if (_playerMovement.GetXAxis() > 0f)
         {
             _spriteRenderer.flipX = false;
             animState = AnimationState.Running;
             if(!runningSFX.isPlaying && IsGrounded()) runningSFX.Play();
         }
-        else if (_xAxis < 0f)
+        else if (_playerMovement.GetXAxis() < 0f)
         {
             _spriteRenderer.flipX = true;
             animState = AnimationState.Running;
@@ -82,7 +85,75 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics2D.BoxCast(_coll.bounds.center, _coll.bounds.size, 0f, Vector2.down, .1f, jumpableGround);
-        // return Physics2D.Raycast(_coll.bounds.center, Vector2.down, (_coll.bounds.size.y / 2f) + 0.1f, jumpableGround);
+        foreach (var layer in jumpableLayers)
+        {
+            if (Physics2D.BoxCast(_coll.bounds.center, _coll.bounds.size, 0f, Vector2.down, .1f, layer))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
+    
+    private IPlayerMovement InitializePlayerMovement()
+    {
+        switch (_playerIndex.GetPlayerIndex())
+        {
+            case 0:
+                return new Player1Movement();
+            case 1:
+                return new Player2Movement();
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+}
+
+internal class Player1Movement : IPlayerMovement
+{
+    public float GetXAxis()
+    { 
+        return Input.GetAxisRaw("Horizontal");
+    }
+
+    public bool GetJump()
+    {
+        return Input.GetButtonDown("Jump");
+    }
+}
+
+internal class Player2Movement : IPlayerMovement
+{
+    /**
+     * The axis is handled this way so if the player presses both buttons at the same time
+     * he does not move instead of moving left or right
+     */
+    public float GetXAxis()
+    {
+        var curAxis = 0;
+        if (Input.GetKey("j"))
+        {
+            curAxis--;
+        }
+        if (Input.GetKey("l"))
+        {
+            curAxis++;
+        }
+
+        return curAxis;
+    }
+
+    public bool GetJump()
+    {
+        return Input.GetKeyDown("i");
+    }
+}
+
+internal interface IPlayerMovement
+{
+    float GetXAxis();
+
+    bool GetJump();
+    
 }
