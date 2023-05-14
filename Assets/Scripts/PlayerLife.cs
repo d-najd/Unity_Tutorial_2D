@@ -10,6 +10,8 @@ public class PlayerLife : MonoBehaviour
     private Animator _animator;
     private static readonly int Dead = Animator.StringToHash("dead");
 
+    [SerializeField] private AudioSource deathSFX;
+
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -22,6 +24,7 @@ public class PlayerLife : MonoBehaviour
         {
             _rb.bodyType = RigidbodyType2D.Static;
             _animator.SetTrigger(Dead);
+            deathSFX.Play();
         }
     }
 

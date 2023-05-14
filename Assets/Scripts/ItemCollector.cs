@@ -7,6 +7,8 @@ public class ItemCollector : MonoBehaviour
 {
     private int _cherries = 0;
     [SerializeField] private TextMeshProUGUI text;
+    
+    [SerializeField] private AudioSource itemCollectSFX;
 
     private void Start()
     {
@@ -19,7 +21,8 @@ public class ItemCollector : MonoBehaviour
         {
             Destroy(other.gameObject);
             _cherries++;
-            Debug.Log($"Collected Cherries: {_cherries}");
+            itemCollectSFX.Play();
+            // Debug.Log($"Collected Cherries: {_cherries}");
             text.text = $"Cherries Collected: {_cherries}";
         }
     }

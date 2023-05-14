@@ -12,6 +12,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpForce = 12f;
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private LayerMask jumpableGround;
+
+    [SerializeField] private AudioSource runningSFX;
+    [SerializeField] private AudioSource jumpingSFX;
     
     private static readonly int AnimStateTag = Animator.StringToHash("state");
     private enum AnimationState
@@ -45,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
+            jumpingSFX.Play();
         }
     }
 
@@ -55,11 +59,13 @@ public class PlayerMovement : MonoBehaviour
         {
             _spriteRenderer.flipX = false;
             animState = AnimationState.Running;
+            if(!runningSFX.isPlaying && IsGrounded()) runningSFX.Play();
         }
         else if (_xAxis < 0f)
         {
             _spriteRenderer.flipX = true;
             animState = AnimationState.Running;
+            if(!runningSFX.isPlaying && IsGrounded()) runningSFX.Play();
         }
         
         if (_rb.velocity.y > .1f)
