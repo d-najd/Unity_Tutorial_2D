@@ -5,7 +5,6 @@ using UnityEngine.Serialization;
 
 public class ItemCollector : MonoBehaviour
 {
-    private int _cherries = 0;
     [SerializeField] private AudioSource itemCollectSFX;
     [SerializeField] private ScoreCounter scoreCounter;
 
@@ -14,7 +13,6 @@ public class ItemCollector : MonoBehaviour
         if (other.gameObject.CompareTag("Cherry"))
         {
             Destroy(other.gameObject);
-            _cherries++;
             itemCollectSFX.Play();
             scoreCounter.CherryCollected(GetComponent<PlayerIndex>().GetPlayerIndex());
         }

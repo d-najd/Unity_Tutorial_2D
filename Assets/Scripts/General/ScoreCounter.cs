@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScoreCounter : MonoBehaviour
 {
-    private static Dictionary<int, int> CherryByPlayer = new Dictionary<int, int>();
+    private static readonly Dictionary<int, int> CherryByPlayer = new Dictionary<int, int>();
     private static int _overallCherries = 0;
     [SerializeField] private TextMeshProUGUI text;
 
@@ -20,7 +20,7 @@ public class ScoreCounter : MonoBehaviour
         _overallCherries++;
         if (CherryByPlayer.TryGetValue(playerIndex, out var value))
         {
-            CherryByPlayer.Remove(playerIndex);
+            CherryByPlayer.Remove(playerIndex);     
             CherryByPlayer.Add(playerIndex, value + 1);
         }
         else
