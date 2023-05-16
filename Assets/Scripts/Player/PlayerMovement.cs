@@ -17,6 +17,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioSource jumpingSFX;
     
     private static readonly int AnimStateTag = Animator.StringToHash("state");
+    
+    /** If we dont give the camera time to reset it will drag the players to its position in the first frame */
+    private bool _cameraIsReset = false;
     private enum AnimationState
     {
         Idle = 0,
@@ -45,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
+        
         _rb.velocity = new Vector2(_playerMovement.GetXAxis() * moveSpeed, _rb.velocity.y);
         
         if (_playerMovement.GetJump() && IsGrounded())
@@ -52,8 +56,27 @@ public class PlayerMovement : MonoBehaviour
             _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
             jumpingSFX.Play();
         }
+        
+        PreventPlayerOutOfScreen();
     }
 
+    private void PreventPlayerOutOfScreen()
+    {
+        if (_cameraIsReset)
+        {
+            Vector3 minScreenBounds = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
+            Vector3 maxScreenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+            transform.position =
+                new Vector3(Mathf.Clamp(transform.position.x, minScreenBounds.x + 1, maxScreenBounds.x - 1),
+                    Mathf.Clamp(transform.position.y, minScreenBounds.y + 1, maxScreenBounds.y - 1),
+                    transform.position.z);
+        }
+        else
+        {
+            _cameraIsReset = true;
+        }
+    }
 
     private void AnimatePlayer()
     {
